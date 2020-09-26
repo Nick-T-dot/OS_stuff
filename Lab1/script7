@@ -1,0 +1,4 @@
+#!/bin/bash
+touch emails.list
+grep -o -R -s -E -I "[a-zA-Z0-9_.]+[@][A-Za-z0-9_.]+[.][A-Za-z0-9]+" /etc/* | awk -F : '{print " " $2}' | awk -F , '{print $1}' | tr '\n' "," > emails.list
+cat emails.list
