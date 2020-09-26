@@ -1,0 +1,5 @@
+#!/bin/bash
+touch tmp
+man bash | grep -o -i "[A-Za-z]\{4,\}" > tmp
+cat tmp | tr [:upper:] [:lower:] | sort | uniq -c | sort -k1 -n -r | head -3
+rm tmp
