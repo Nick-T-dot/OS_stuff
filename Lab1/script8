@@ -1,0 +1,6 @@
+#!/bin/bash
+touch tmp
+awk -F : '{print $1 " " $3}' /etc/passwd>tmp
+cat tmp | sort -k2
+rm tmp
+
