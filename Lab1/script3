@@ -1,0 +1,21 @@
+#!/bin/bash
+echo -e "Welcome to my glorious menu\nSelect an option"
+echo -e "-vi\n-nano\n-links\n-q"
+read answer
+case $answer in
+  "vi")
+      vi
+      ;;
+  "nano")
+      nano
+      ;;
+  "links")
+      links
+      ;;   
+  "q")
+      exit
+      ;; 
+  *)
+      exit
+      ;;    
+esac      
