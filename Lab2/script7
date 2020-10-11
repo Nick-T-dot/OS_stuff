@@ -1,0 +1,49 @@
+#!/bin/bash
+pid=0
+max=0
+bytes=0
+name=0
+rm time1
+rm time2
+rm tmp
+touch time1
+touch time2
+touch temp1
+pid=0
+ps aux | awk '{print $2}' | sed '1d' > temp1
+
+while read i
+do
+                pid=$(echo $i | awk '{print $1}')
+        if test -f "/proc/$pid/io"; then
+                bytes=$(cat /proc/$pid/io | grep rchar | awk '{print $2}')
+                 echo $pid $bytes >> time1
+        fi
+done < temp1
+
+sleep $1
+tbytes=0
+while read j
+do
+        pid=$(echo $j | awk '{print $1}')
+                tbytes=$(echo $j | awk '{print $2}')
+        if test -f "/proc/$pid/io"; then
+                bytes=$(cat /proc/$pid/io | grep rchar | awk '{print $2}')
+                echo $pid $tbytes $bytes >> time2
+        fi
+done < time1
+b1=0
+b2=0
+delta=0
+str=0
+while read k
+do
+        pid=$(echo $k | awk '{print $1}')
+                b1=$(echo $k | awk '{print $2}')
+                b2=$(echo $k | awk '{print $3}')
+                delta=$((b2-b1))
+echo $delta
+                str=$(ps -up $pid | sed '1d' | awk '{print $11}')
+        echo $pid " : " $str " : " $delta >> tmp
+done < time2
+sort -r -n -k5 tmp | head -n 3 > file7
