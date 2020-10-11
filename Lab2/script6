@@ -1,0 +1,19 @@
+#!/bin/bash
+pid=0
+max=0
+mem=0
+name=0
+ps aux | awk '{print $2}' | sed '1d' > temp1
+while read i
+do
+        if test -f "/proc/$i/statm"; then
+                mem=$(cat /proc/$i/statm | awk '{print $2}')
+                if [[ $mem -gt $max ]]; then
+                        pid=$i
+                        max=$mem
+                        name=$(cat /proc/$i/status | grep Name | awk '{print $2}')
+                fi
+        fi
+done < temp1
+rm temp1
+echo $pid $max $name
