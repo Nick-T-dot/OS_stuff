@@ -1,0 +1,48 @@
+#!/bin/bash
+first=1
+pp=0
+Ppp=0
+avg=0
+n=0
+count=0
+avgcount=0
+touch file5
+while read string
+do
+
+        pp=$(echo $string | awk '{print $7}')
+        n=$(echo $string | awk '{print $11}')
+
+        if [[ first -eq 0 ]]; then
+                if [[ $Ppp -ne $pp ]]; then
+                        if [[ $count -eq 0 ]]; then
+                                 count=1
+                                 avg=$n
+                                 avgcount=$n
+                        else
+                                avgcount=$(echo "scale=5;$avg/$count" | bc -l)
+                        fi
+                        echo "Average_Sleeping_Children_of_ParentID = "$Ppp " is " $avgcount >>file5
+                        echo $string >> file5
+                        avg=$n
+                        count=1
+                else
+                avg=$(echo "scale=5;$avg+$n" | bc -l)
+                count=$((count+1))
+                echo $string >> file5
+
+                fi
+
+        fi
+
+        if [[ first -eq 1 ]]; then
+                avg=$n
+                count=1
+                echo $string >> file5
+                first=0
+        fi
+
+        Ppp=$pp
+done < file4
+avgcount=$(echo "scale=5;$avg/$count" | bc -l)
+echo "Average_Sleeping_Children_of_ParentID = "$Ppp " is " $avgcount >>file5
