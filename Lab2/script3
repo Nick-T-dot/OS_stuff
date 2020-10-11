@@ -1,0 +1,2 @@
+#!/bin/bash
+ps aux | sort -k9| tail -2| head -1
