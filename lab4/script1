@@ -1,0 +1,26 @@
+#!/bin/bash
+name=$1
+if [[ $# -ne 1 ]]; then
+echo "WRONG ARGUMENT COUNT"
+exit
+fi
+
+if [[ ! -a /home/user/lab4/$name ]]; then
+echo "NO FILE"
+exit
+fi
+
+linkname=$name
+if [[ ! -d /home/user/.trash ]]; then
+mkdir /home/user/.trash
+fi
+while (true); do
+if [[ -a /home/user/.trash/$linkname ]]; then
+linkname=$linkname"1"
+else
+break
+fi
+done
+ln /home/user/lab4/$name /home/user/.trash/$linkname
+rm /home/user/lab4/$name
+echo /home/user/lab4/$name" "$linkname >> /home/user/.trash.log
