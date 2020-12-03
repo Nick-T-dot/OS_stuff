@@ -1,0 +1,48 @@
+#!/bin/bash
+nowdate=$(date +"%Y-%m-%d")
+thendate=""
+nows=$(date +"%s")
+thens=""
+deltas=777777
+lastdate=""
+lasts=0
+curdir=Backup-$nowdate
+listsource=""
+listbackup=""
+cnt=0
+tmpfile=""
+
+if ! test -d /home/user/restore; then
+mkdir /home/user/restore
+fi
+
+ls /home/user/ -a | grep Backup- > tmp
+
+while read str
+do
+thendate=$(echo $str | awk -F - '{print $2"-"$3"-"$4}')
+thens=$(date -d $thendate +"%s")
+if [[ $thens -ge $lasts ]]; then
+lastdate=$thendate
+lasts=$thens
+fi
+done < tmp
+rm tmp
+
+if [[ $thendate == "" ]]; then
+echo "NO BACKUP DIR"
+exit
+fi
+
+curdir=Backup-$thendate
+
+list=$(ls -A /home/user/$curdir)
+for file in $list
+do
+tempfile=$(echo $file | awk -F - '{print $1}')
+cnt=$(echo $list | grep -wo $tempfile | wc -w)
+if [[ cnt -eq 1 ]]; then
+        cp /home/user/$curdir/$file /home/user/restore/
+fi
+
+done
