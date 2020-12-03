@@ -1,0 +1,14 @@
+#!/bin/bash
+while true; do
+read string
+if [[ $string == "*" ]]; then
+kill -USR2  $(cat .pid)
+fi
+if [[ $string == "+" ]]; then
+kill -USR1 $(cat .pid)
+fi
+if [[ $string == "TERM" ]]; then
+kill -SIGTERM $(cat .pid)
+fi
+
+done
