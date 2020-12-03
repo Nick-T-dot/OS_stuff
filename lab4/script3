@@ -1,0 +1,62 @@
+#!/bin/bash
+nowdate=$(date +"%Y-%m-%d")
+thendate=""
+nows=$(date +"%s")
+thens=""
+deltas=777777
+lastdate=""
+lasts=0
+curdir=Backup-$nowdate
+listsource=""
+listbackup=""
+
+ls /home/user/ -a | grep Backup- > tmp
+if [[ $(cat tmp | wc -l)  -eq 0 ]]; then
+mkdir /home/user/Backup-$nowdate
+fi
+
+while read str
+do
+thendate=$(echo $str | awk -F - '{print $2"-"$3"-"$4}')
+thens=$(date -d $thendate +"%s")
+if [[ $thens -ge $lasts ]]; then
+lastdate=$thendate
+lasts=$thens
+fi
+done < tmp
+rm tmp
+
+deltas=$(($nows-$lasts))
+if [[ $deltas -gt 604800 ]]; then
+mkdir /home/user/Backup-$nowdate > /home/user/backup-report
+echo "NEW CATALOG" "Backup-"$nowdate $nowdate $(ls -A  /home/user/source/) >> /home/user/backup-report
+cp /home/user/source/* /home/user/Backup-$nowdate
+else
+curdir=Backup-$thendate
+listsource=$(ls -A  /home/user/source/)
+listbackup=$(ls -A /home/user/$curdir/)
+echo "BACKUP" "Backup-"$thendate $nowdate >> /home/user/backup-report
+flag=0
+for fsrc in $listsource
+do
+        for fbkp in $listbackup
+        do
+        if [[ $fsrc == $fbkp ]]; then
+        flag=1
+        fi
+        done
+if [[ $flag -eq 0 ]]; then
+cp /home/user/source/$fsrc /home/user/$curdir/
+echo $fsrc >> /home/user/backup-report
+else
+sizet=$(stat /home/user/source/$fsrc  | grep Size | awk '{print $2}')
+sizec=$(stat /home/user/$curdir/$fsrc | grep Size | awk '{print $2}')
+        if [[ sizet -ne sizec ]]; then
+        echo $fsrc-$nowdate $fsrc >> /home/user/backup-report
+        mv /home/user/$curdir/$fsrc /home/user/$curdir/$fsrc-$nowdate
+        cp /home/user/source/$fsrc /home/user/$curdir/$fsrc
+        fi
+fi
+flag=0
+done
+fi
