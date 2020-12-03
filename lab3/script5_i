@@ -1,0 +1,40 @@
+#!/bin/bash
+num=1
+mode="+"
+(tail -f pipe5) |
+while true; do
+        read string;
+
+                if [[ $string == '.' ]]; then
+                        mode='.'
+                fi
+
+                if [[ "$string" == '+' ]]; then
+                        mode='+'
+                fi
+
+                if [[ "$string" == "QUIT" ]]; then
+                echo "Quit"
+                killall script5_g
+                killall script5_i
+                fi
+
+                if [[ "$string" =~ [0-9]+ && $string != '.' && "$string" != '+' ]]; then
+                        if [[ "$mode" == '+' ]]; then
+                                num=$(($num + $string))
+                                echo $num
+                        fi
+
+                        if [[ "$mode" == '.' ]]; then
+                                 num=$((num*string))
+                                 echo $num
+                         fi
+                fi
+
+                if [[ (! "$string" =~ [0-9]+) && "$string" != '+' && "$string" != '.' ]]; then
+                echo "ERROR"
+                killall script5_g
+                killall script5_i
+                fi
+
+done
