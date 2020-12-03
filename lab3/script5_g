@@ -1,0 +1,7 @@
+#!/bin/bash
+touch test
+while true; do
+        read string;
+        echo $string > pipe5
+echo $string >> test
+done
