@@ -1,0 +1,30 @@
+#!/bin/bash
+echo $$ > .pid
+mode="a"
+val=1
+usr1()
+{
+        mode="a"
+}
+usr2()
+{
+        mode="m"
+}
+usr3()
+{
+        echo "QUIT"
+        exit
+}
+trap 'usr1' USR1
+trap 'usr2' USR2
+trap 'usr3' SIGTERM
+while true; do
+case $mode in
+a)
+        val=$(($val + 2));;
+m)
+        val=$(($val*2));;
+esac
+echo $val
+sleep 1
+done
